@@ -1,5 +1,4 @@
 require "json"
-require "logger"
 require "net/http"
 require "resolv"
 require "stringio"
@@ -8,8 +7,8 @@ require_relative "pf"
 
 module Sprouter
   class Adjust
-    def initialize(pf: PF.new, logger: Logger.new(StringIO.new))
-      @pf = pf
+    def initialize(pf: PF.new, logger:)
+      @pf = LoggingPf.new(pf, logger)
       @logger = logger
     end
 
@@ -81,6 +80,27 @@ module Sprouter
       avg = data.inject(&:+) / data.size
       logger.info "Average pingdrop: #{avg} (#{data.size} samples)"
       avg
+    end
+
+    class LoggingPf
+      def initialize(pf, logger)
+        @pf = pf
+        @logger = logger
+      end
+
+      def set_table(table, ips)
+        @logger.info "set #{table}'s IPs to #{ips.inspect}"
+        @pf.set_table(table, ips)
+      end
+
+      def flush_table(table)
+        @logger.info "flush #{table}'s IPs"
+        @pf.flush_table(table)
+      end
+
+      def method_missing(*args)
+        @pf.send(*args)
+      end
     end
   end
 end

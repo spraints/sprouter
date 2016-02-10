@@ -1,10 +1,6 @@
 module Sprouter
   class PF
     class Test
-      def initialize(logger:)
-        @logger = logger
-      end
-
       def tables
         ["turbo_hosts", "turbo_sites"]
       end
@@ -14,11 +10,9 @@ module Sprouter
       end
 
       def set_table(table, ips)
-        @logger.info "would set #{table}'s IPs to #{ips.join(", ")}"
       end
 
       def flush_table(table)
-        @logger.info "would flush #{table}'s IPs"
       end
     end
 

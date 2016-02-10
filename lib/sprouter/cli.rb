@@ -1,3 +1,5 @@
+require "logger"
+
 module Sprouter
   class CLI
     def self.run!
@@ -8,13 +10,12 @@ module Sprouter
         Status.run!
       when "adjust"
         require_relative "adjust"
-        options = {}
+        options = {logger: Logger.new(STDOUT)}
         config_file = nil
         while ARGV.any?
           case arg = ARGV.shift
           when "--test", "-t"
-            options[:logger] = Logger.new(STDOUT)
-            options[:pf] = PF::Test.new(logger: options[:logger])
+            options[:pf] = PF::Test.new
           else
             config_file = arg
           end
