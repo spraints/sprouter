@@ -19,7 +19,7 @@ module Sprouter
     end
 
     def lines(*cmd)
-      IO.popen(*cmd) { |pf| pf.each_line.map(&:strip) }
+      IO.popen(cmd) { |pf| pf.each_line.map(&:strip) }
     end
   end
 end
