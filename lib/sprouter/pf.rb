@@ -17,5 +17,9 @@ module Sprouter
     def read_table(table)
       lines "pfctl", "-t", table, "-T", "show"
     end
+
+    def lines(*cmd)
+      IO.popen(*cmd) { |pf| pf.each_line.map(&:strip) }
+    end
   end
 end
