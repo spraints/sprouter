@@ -21,7 +21,7 @@ turbo_hosts:
   - 192.168.100.22
 
 config:
-  visage: 192.168.100.81:12004
+  stat: "http://192.168.100.81:12004/data/minibuntu/ping/ping_droprate-8.8.8.8"
   threshold: 0.5
 ```
 
