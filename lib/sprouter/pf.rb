@@ -6,6 +6,7 @@ module Sprouter
 
     def table_entries(table)
       @table_entries ||= Hash.new { |h, table| h[table] = read_table(table) }
+      @table_entries[table]
     end
 
     private
