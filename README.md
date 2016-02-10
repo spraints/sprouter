@@ -13,12 +13,17 @@ turbo_sites:
 
 # Internal hosts that should get completely moved to the fast link
 # if pings are getting dropped.
-turbo_hosts:
+preferred_hosts:
   label:
   - 192.168.100.1
   - 192.168.100.2
   label2:
   - 192.168.100.22
+
+# Optional set of hosts that should be added to `turbo_hosts` always
+turbo_hosts:
+  label3:
+  - 192.168.100.32
 
 config:
   stat: "http://192.168.100.81:12004/data/minibuntu/ping/ping_droprate-8.8.8.8"
