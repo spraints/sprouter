@@ -27,8 +27,8 @@ module Sprouter
     # turbo_sites
 
     def update_turbo_sites(info)
-      turbo_sites = info.fetch("turbo_sites")
-      turbo_site_ips = lookup_ips(turbo_sites.values.inject(&:+))
+      turbo_sites = info.fetch("turbo_sites", {})
+      turbo_site_ips = lookup_ips(turbo_sites.values.inject([], &:+))
       pf.set_table "turbo_sites", turbo_site_ips
     end
 
@@ -51,8 +51,8 @@ module Sprouter
       turbo_hosts_config = info.fetch("turbo_hosts", {})
       turbo_host_ips = turbo_hosts_config.values.inject([], &:+)
       if pingdroppin?(info.fetch("config"))
-        preferred_hosts_config = info.fetch("preferred_hosts")
-        preferred_host_ips = preferred_hosts_config.values.inject(&:+)
+        preferred_hosts_config = info.fetch("preferred_hosts", {})
+        preferred_host_ips = preferred_hosts_config.values.inject([], &:+)
         pf.set_table "turbo_hosts", preferred_host_ips + turbo_host_ips
       elsif turbo_host_ips.any?
         pf.set_table "turbo_hosts", turbo_host_ips
