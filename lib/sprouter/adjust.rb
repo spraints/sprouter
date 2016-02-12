@@ -98,6 +98,12 @@ module Sprouter
         @pf.flush_table(table)
       end
 
+      def table_entries(table)
+        entries = @pf.table_entries(table)
+        @logger.info "#{table} = #{entries}"
+        entries
+      end
+
       def method_missing(*args)
         @pf.send(*args)
       end
