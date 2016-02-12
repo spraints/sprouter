@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set -e
+
+bundle check || bundle --path .bundle --binstubs bin

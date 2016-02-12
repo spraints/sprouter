@@ -1,10 +1,5 @@
 #!/usr/bin/env ruby
 
-begin
-  require "sprouter/cli"
-rescue LoadError
-  $: << File.expand_path("../lib", File.dirname(__FILE__))
-  require "sprouter/cli"
-end
+require_relative "../lib/sprouter/cli"
 
 Sprouter::CLI.run!
