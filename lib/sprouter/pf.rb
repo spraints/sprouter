@@ -6,7 +6,7 @@ module Sprouter
       end
 
       def table_entries(table)
-        []
+        ["10.10.10.10"]
       end
 
       def set_table(table, ips)
