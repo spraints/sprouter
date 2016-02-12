@@ -26,11 +26,19 @@ turbo_hosts:
   - 192.168.100.32
 
 config:
-  stat: "http://192.168.100.81:12004/data/minibuntu/ping/ping_droprate-8.8.8.8"
-  threshold: 0.5
+  go_faster:
+    stat_url: "http://192.168.100.81:12004/data/minibuntu/ping/ping_droprate-8.8.8.8"
+    window: 60
+    mode: average
+    above: 0.5
+  go_slower:
+    stat_url: "http://192.168.100.81:12004/data/minibuntu/ping/ping_droprate-8.8.8.8"
+    window: 60
+    mode: all
+    below: 0.5
 ```
 
-When you run `sprouter adjust config.yml`, the sites will be looked up and their IPs added to the `turbo_sites` table. Visage will be queried for the current rate of errors. If the average over the last minute is over `threshold`, the `turbo_hosts` will be populated. Otherwise, it'll be emptied.
+When you run `sprouter adjust config.yml`, the sites will be looked up and their IPs added to the `turbo_sites` table. `turbo_hosts` will be added to the `turbo_hosts` table. If the `go_faster` condition is true, `preferred_hosts` will be added, too. If the `go_slower` condition is true, every non-turbo host will be removed. If neither is true, the table will be left unchanged. The URL should be a visage json data endpoint.
 
 Running `sprouter status` will show the tables.
 
