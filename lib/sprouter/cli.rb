@@ -1,15 +1,17 @@
 require "logger"
 
+require_relative "adjust"
+require_relative "status"
+
 module Sprouter
   class CLI
     def self.run!
       command = ARGV.shift
       case command
       when "status"
-        require_relative "status"
         Status.run!
+
       when "adjust"
-        require_relative "adjust"
         options = {logger: Logger.new(STDOUT)}
         config_file = nil
         while ARGV.any?
@@ -25,6 +27,7 @@ module Sprouter
         else
           usage
         end
+
       else
         usage
       end
