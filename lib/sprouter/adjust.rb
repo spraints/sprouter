@@ -50,10 +50,13 @@ module Sprouter
       preferred_host_ips = config.preferred_hosts
 
       if go_faster?
+        logger.info "The slow link is too slow, moving preferred & turbo to the fast link."
         set preferred_host_ips + turbo_host_ips
       elsif go_slower?
+        logger.info "The slow link is fast enough, moving preferred back to the slow link."
         set turbo_host_ips
       else
+        logger.info "Status quo. Just ensure that the turbo hosts are turboed."
         set pf.table_entries("turbo_hosts") + turbo_host_ips
       end
     end
