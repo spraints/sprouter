@@ -1,6 +1,7 @@
 require "logger"
 
 require_relative "adjust"
+require_relative "config"
 require_relative "status"
 
 module Sprouter
@@ -13,17 +14,16 @@ module Sprouter
 
       when "adjust"
         options = {logger: Logger.new(STDOUT)}
-        config_file = nil
         while ARGV.any?
           case arg = ARGV.shift
           when "--test", "-t"
             options[:pf] = PF::Test.new
           else
-            config_file = arg
+            options[:config] = Config.new(YAML.load(File.read(arg)))
           end
         end
-        if config_file
-          Adjust.new(options).run!(config_file)
+        if options[:config]
+          Adjust.new(options).run!
         else
           usage
         end
@@ -31,6 +31,12 @@ module Sprouter
       else
         usage
       end
+    end
+
+    def self.usage
+      puts "Usage: sprouter status"
+      puts "Usage: sprouter adjust [--test] config.yaml"
+      exit 1
     end
   end
 end
