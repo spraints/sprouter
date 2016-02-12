@@ -1,3 +1,5 @@
+require_relative "ping_check"
+
 module Sprouter
   class Config
     def initialize(options)
@@ -21,22 +23,21 @@ module Sprouter
       deep_values("preferred_hosts")
     end
 
-    # How bad must the connection be before sending preferred hosts over the fast link?
-    #
-    # This should be a number between 0.0 and 1.0.
-    def pingdrop_threshold
-      config.fetch("threshold", 1.0)
+    # Should preferred_hosts stop being turbo_hosts?
+    def go_slower
+      ping_check "go_slower"
     end
 
-    # Where do we look for the pingdrop metric?
-    def pingdrop_url
-      config.fetch("stat", nil)
+    # Should preferred_hosts start being turbo_hosts?
+    def go_faster
+      ping_check "go_faster"
     end
 
     private
 
-    def config
-      options["config"] || {}
+    def ping_check(key)
+      config = options["config"] || {}
+      Sprouter::PingCheck.build(config[key])
     end
 
     def deep_values(key)

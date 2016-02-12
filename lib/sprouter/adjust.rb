@@ -48,34 +48,35 @@ module Sprouter
     def update_turbo_hosts
       turbo_host_ips = config.turbo_hosts
       preferred_host_ips = config.preferred_hosts
-      if pingdroppin?
-        pf.set_table "turbo_hosts", preferred_host_ips + turbo_host_ips
-      elsif turbo_host_ips.any?
-        pf.set_table "turbo_hosts", turbo_host_ips
+
+      if go_faster?
+        set preferred_host_ips + turbo_host_ips
+      elsif go_slower?
+        set turbo_host_ips
+      else
+        set pf.table_entries("turbo_hosts") + turbo_host_ips
+      end
+    end
+
+    def set(ips)
+      if ips.any?
+        pf.set_table "turbo_hosts", ips.sort.uniq
       else
         pf.flush_table "turbo_hosts"
       end
     end
 
-    def pingdroppin?
-      config.pingdrop_threshold < average_pingdrop
+    def go_faster?
+      test config.go_faster
     end
 
-    def average_pingdrop
-      finish = Time.now.to_i
-      start = finish - 60
-      uri = URI("#{config.pingdrop_url}?start=#{start}&finish=#{finish}")
-      raw_json = Net::HTTP.get_response(uri).body
-      result = JSON.load(raw_json)
-      # {"minibuntu" => {"ping" => {"ping_droprate-8.8.8.8" => {"value": {"start" => 1455136836, "finish" => 1455136896, "data" => [0, 0, 0, 0, 0, null]}}}}}
-      host_data = result.values.first
-      ping_data = host_data.values.first
-      ping_drop = ping_data.values.first
-      value_hash = ping_drop.fetch("value")
-      data = value_hash.fetch("data").compact.map(&:to_f)
-      avg = data.inject(&:+) / data.size
-      logger.info "Average pingdrop: #{avg} (#{data.size} samples)"
-      avg
+    def go_slower?
+      test config.go_slower
+    end
+
+    def test(predicate)
+      predicate.logger = logger
+      predicate.triggered?
     end
 
     class LoggingPf

@@ -11,8 +11,8 @@ describe Sprouter::Config do
     it { expect(config.turbo_sites).to eq([]) }
     it { expect(config.turbo_hosts).to eq([]) }
     it { expect(config.preferred_hosts).to eq([]) }
-    it { expect(config.pingdrop_threshold).to eq(1.0) }
-    it { expect(config.pingdrop_url).to be_nil }
+    it { expect(config.go_faster).to be_a(Sprouter::PingCheck) }
+    it { expect(config.go_slower).to be_a(Sprouter::PingCheck) }
   end
 
   context "empty options" do
@@ -20,8 +20,8 @@ describe Sprouter::Config do
     it { expect(config.turbo_sites).to eq([]) }
     it { expect(config.turbo_hosts).to eq([]) }
     it { expect(config.preferred_hosts).to eq([]) }
-    it { expect(config.pingdrop_threshold).to eq(1.0) }
-    it { expect(config.pingdrop_url).to be_nil }
+    it { expect(config.go_faster).to be_a(Sprouter::PingCheck) }
+    it { expect(config.go_slower).to be_a(Sprouter::PingCheck) }
   end
 
   context "top-level only" do
@@ -34,8 +34,8 @@ describe Sprouter::Config do
     it { expect(config.turbo_sites).to eq([]) }
     it { expect(config.turbo_hosts).to eq([]) }
     it { expect(config.preferred_hosts).to eq([]) }
-    it { expect(config.pingdrop_threshold).to eq(1.0) }
-    it { expect(config.pingdrop_url).to be_nil }
+    it { expect(config.go_faster).to be_a(Sprouter::PingCheck) }
+    it { expect(config.go_slower).to be_a(Sprouter::PingCheck) }
   end
 
   context "full" do
@@ -62,13 +62,21 @@ describe Sprouter::Config do
         - 172.16.0.13
 
       config:
-        stat: "http://whatever"
-        threshold: 0.5
+        go_faster:
+          stat_url: "http://whatever"
+          window: 60
+          mode: average
+          above: 0.5
+        go_slower:
+          stat_url: "http://whatever"
+          window: 300
+          mode: all
+          below: 0.2
     YAML
     it { expect(config.turbo_sites).to eq(["www.google.com", "github.com", "gist.github.com"]) }
     it { expect(config.turbo_hosts).to eq(["172.16.0.1", "172.16.0.2", "172.16.0.3"]) }
     it { expect(config.preferred_hosts).to eq(["172.16.0.11", "172.16.0.12", "172.16.0.13"]) }
-    it { expect(config.pingdrop_threshold).to eq(0.5) }
-    it { expect(config.pingdrop_url).to eq("http://whatever") }
+    it { expect(config.go_faster).to be_a(Sprouter::PingCheck) }
+    it { expect(config.go_slower).to be_a(Sprouter::PingCheck) }
   end
 end
