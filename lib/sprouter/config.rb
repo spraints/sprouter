@@ -13,6 +13,11 @@ module Sprouter
       deep_values("turbo_sites")
     end
 
+    # Domain names of sites that should never go over the fast link.
+    def slow_sites
+      deep_values("slow_sites")
+    end
+
     # IP addresses of local machines that should always get to use the fast link.
     def turbo_hosts
       deep_values("turbo_hosts")
