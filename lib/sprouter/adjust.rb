@@ -17,6 +17,7 @@ module Sprouter
 
     def run!
       update_turbo_sites
+      update_slow_sites
       update_turbo_hosts
     end
 
@@ -28,6 +29,11 @@ module Sprouter
     def update_turbo_sites
       turbo_site_ips = lookup_ips(config.turbo_sites)
       pf.set_table "turbo_sites", turbo_site_ips
+    end
+
+    def update_slow_sites
+      slow_site_ips = lookup_ips(config.slow_sites)
+      pf.set_table "slow_sites", slow_site_ips
     end
 
     def lookup_ips(hostnames)

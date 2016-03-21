@@ -47,6 +47,10 @@ describe Sprouter::Config do
         - github.com
         - gist.github.com
 
+      slow_sites:
+        bizarre:
+        - www.catb.org
+
       turbo_hosts:
         mine:
         - 172.16.0.1
@@ -74,6 +78,7 @@ describe Sprouter::Config do
           below: 0.2
     YAML
     it { expect(config.turbo_sites).to eq(["www.google.com", "github.com", "gist.github.com"]) }
+    it { expect(config.slow_sites).to eq(["www.catb.org"]) }
     it { expect(config.turbo_hosts).to eq(["172.16.0.1", "172.16.0.2", "172.16.0.3"]) }
     it { expect(config.preferred_hosts).to eq(["172.16.0.11", "172.16.0.12", "172.16.0.13"]) }
     it { expect(config.go_faster).to be_a(Sprouter::PingCheck) }
