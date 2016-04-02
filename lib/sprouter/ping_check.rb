@@ -1,3 +1,4 @@
+require "json"
 require "logger"
 require "net/http"
 require "stringio"
@@ -71,21 +72,33 @@ module Sprouter
     private
 
     def get_stat
-      stat = read_stat
+      stat = read_stat(url = build_url)
       # {"minibuntu" => {"ping" => {"ping_droprate-8.8.8.8" => {"value": {"start" => 1455136836, "finish" => 1455136896, "data" => [0, 0, 0, 0, 0, null]}}}}}
       host_data = stat.values.first
       ping_data = host_data.values.first
       ping_drop = ping_data.values.first
       value_hash = ping_drop.fetch("value")
       value_hash.fetch("data").compact
+    rescue => e
+      logger.warn "Error while fetching #{url}: #{e.class.name}: #{e}"
+      [0]
     end
 
-    def read_stat
+    def read_stat(url)
+      uri = URI(url)
+      # http://opensourceconnections.com/blog/2008/04/24/adding-timeout-to-nethttp-get_response/
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.set_debug_output logger
+      http.read_timeout = 5
+      http.open_timeout = 5
+      raw_json = http.start { |http| http.get(uri.request_uri).body }
+      JSON.load(raw_json)
+    end
+
+    def build_url
       finish = Time.now.to_i
       start = finish - window.to_i
-      uri = URI("#{stat_url}?start=#{start}&finish=#{finish}")
-      raw_json = Net::HTTP.get_response(uri).body
-      JSON.load(raw_json)
+      "#{stat_url}?start=#{start}&finish=#{finish}"
     end
 
     class Averager
