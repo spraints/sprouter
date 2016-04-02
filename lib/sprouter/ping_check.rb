@@ -1,5 +1,7 @@
 require "logger"
+require "net/http"
 require "stringio"
+require "uri"
 
 module Sprouter
   class PingCheck
