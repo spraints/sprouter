@@ -71,17 +71,21 @@ module Sprouter
     private
 
     def get_stat
-      finish = Time.now.to_i
-      start = finish - window.to_i
-      uri = URI("#{stat_url}?start=#{start}&finish=#{finish}")
-      raw_json = Net::HTTP.get_response(uri).body
-      result = JSON.load(raw_json)
+      stat = read_stat
       # {"minibuntu" => {"ping" => {"ping_droprate-8.8.8.8" => {"value": {"start" => 1455136836, "finish" => 1455136896, "data" => [0, 0, 0, 0, 0, null]}}}}}
-      host_data = result.values.first
+      host_data = stat.values.first
       ping_data = host_data.values.first
       ping_drop = ping_data.values.first
       value_hash = ping_drop.fetch("value")
       value_hash.fetch("data").compact
+    end
+
+    def read_stat
+      finish = Time.now.to_i
+      start = finish - window.to_i
+      uri = URI("#{stat_url}?start=#{start}&finish=#{finish}")
+      raw_json = Net::HTTP.get_response(uri).body
+      JSON.load(raw_json)
     end
 
     class Averager
