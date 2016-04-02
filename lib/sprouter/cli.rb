@@ -1,4 +1,5 @@
 require "logger"
+require "yaml"
 
 require_relative "adjust"
 require_relative "config"

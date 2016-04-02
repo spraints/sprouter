@@ -1,8 +1,4 @@
-require "json"
-require "net/http"
 require "resolv"
-require "stringio"
-require "yaml"
 require_relative "pf"
 
 module Sprouter
